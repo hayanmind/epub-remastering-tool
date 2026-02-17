@@ -1,0 +1,20 @@
+{
+  "name": "gov-epub-2026",
+  "private": true,
+  "description": "AI 기반 ePub 2.0 → 3.0 인터랙티브 리마스터링 시스템",
+  "scripts": {
+    "dev": "pnpm --filter @gov-epub/web dev",
+    "dev:api": "pnpm --filter @gov-epub/api dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "clean": "pnpm -r clean"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "jszip": "^3.10.1",
+    "tsx": "^4.21.0"
+  }
+}

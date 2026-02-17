@@ -1,0 +1,46 @@
+[
+  {
+    "id": "alice-in-wonderland",
+    "title": "Alice's Adventures in Wonderland",
+    "author": "Lewis Carroll",
+    "language": "en",
+    "description": "A classic fantasy novel following Alice down the rabbit hole into Wonderland",
+    "filename": "alice-in-wonderland.epub",
+    "fileSize": 189383,
+    "source": "Project Gutenberg",
+    "sourceUrl": "https://www.gutenberg.org/ebooks/11"
+  },
+  {
+    "id": "pride-and-prejudice",
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "language": "en",
+    "description": "A romantic novel of manners exploring love, reputation, and class in Georgian-era England",
+    "filename": "pride-and-prejudice.epub",
+    "fileSize": 24837240,
+    "source": "Project Gutenberg",
+    "sourceUrl": "https://www.gutenberg.org/ebooks/1342"
+  },
+  {
+    "id": "jekyll-and-hyde",
+    "title": "The Strange Case of Dr Jekyll and Mr Hyde",
+    "author": "Robert Louis Stevenson",
+    "language": "en",
+    "description": "A Gothic novella about the duality of human nature through Dr Jekyll's dangerous experiment",
+    "filename": "jekyll-and-hyde.epub",
+    "fileSize": 305137,
+    "source": "Project Gutenberg",
+    "sourceUrl": "https://www.gutenberg.org/ebooks/43"
+  },
+  {
+    "id": "lucky-day",
+    "title": "운수 좋은 날",
+    "author": "현진건",
+    "language": "ko",
+    "description": "1920년대 식민지 조선의 하층민 인력거꾼의 하루를 그린 현진건의 대표 단편소설",
+    "filename": "lucky-day.epub",
+    "fileSize": 6971,
+    "source": "Public Domain (generated)",
+    "sourceUrl": "https://ko.wikisource.org/wiki/운수_좋은_날"
+  }
+]
