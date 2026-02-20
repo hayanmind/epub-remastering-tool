@@ -1,0 +1,9 @@
+node_modules
+.next
+dist
+.env
+.git
+*.md
+!README.md
+!CONTRIBUTING.md
+source/

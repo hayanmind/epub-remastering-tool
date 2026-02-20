@@ -5,6 +5,7 @@ AI 기반 ePub 2.0 → 3.0 인터랙티브 리마스터링 시스템
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%3E%3D9-orange)](https://pnpm.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/hayanmind/epub-remastering-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/hayanmind/epub-remastering-tool/actions/workflows/ci.yml)
 
 ## 소개
 
@@ -52,6 +53,14 @@ pnpm dev
 
 브라우저에서 `http://localhost:3000` 접속.
 
+### Docker로 실행
+
+```bash
+docker compose up
+```
+
+포트 3000 (웹), 3001 (API)이 자동 매핑됩니다.
+
 ### Core 라이브러리 단독 사용
 
 ```typescript
@@ -94,9 +103,11 @@ gov-epub-2026/
 │   ├── FAQ.md          # 자주 묻는 질문
 │   ├── SIGIL-INTEGRATION.md  # Sigil 플러그인 연동 분석
 │   └── FINAL_REPORT.md # 결과보고서
-├── tests/              # 테스트 코드
+├── .github/workflows/  # GitHub Actions CI/CD
 ├── CLAUDE.md           # 프로젝트 기술 참조 (소스 문서 기반)
-└── CONTRIBUTING.md     # 기여 가이드
+├── CONTRIBUTING.md     # 기여 가이드
+├── Dockerfile          # Docker 빌드 (dev/production)
+└── docker-compose.yml  # 로컬 개발 환경
 ```
 
 ## 기술 스택
@@ -108,8 +119,11 @@ gov-epub-2026/
 | **Backend** | Express + Node.js |
 | **AI** | OpenAI GPT-4, ElevenLabs TTS (Mock 모드 지원) |
 | **ePub** | JSZip, htmlparser2, ePubCheck |
-| **Test** | Vitest |
+| **Test** | Vitest (5 Suites, 60 Tests) |
 | **Build** | tsup, pnpm workspace |
+| **CI/CD** | GitHub Actions |
+| **Deploy** | Vercel (서버리스) |
+| **Container** | Docker, Docker Compose |
 
 ## 테스트용 ePub 샘플
 
@@ -147,7 +161,18 @@ pnpm clean        # 빌드 결과물 삭제
 - [기여 가이드](CONTRIBUTING.md) — 개발 환경, 코딩 컨벤션, 확장 포인트
 - [Sigil 연동 분석](docs/SIGIL-INTEGRATION.md) — Sigil ePub 에디터 플러그인 연동
 - [FAQ](docs/FAQ.md) — 자주 묻는 질문
+- [Vercel 배포 가이드](docs/DEPLOY.md) — Vercel 배포 설정
 - [결과보고서](docs/FINAL_REPORT.md) — 사업 결과보고서
+
+## CI/CD
+
+GitHub Actions로 Push/PR 시 자동으로 빌드, 테스트, 타입체크가 실행됩니다.
+
+```
+ci.yml
+├── build-and-test    # pnpm install → core/api/web 빌드 → 테스트 실행
+└── typecheck         # TypeScript 타입 검증
+```
 
 ## 준수 표준
 
