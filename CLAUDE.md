@@ -543,3 +543,117 @@ gov-epub-2026/
 - **커밋**: Conventional Commits (feat/fix/docs/test/chore)
 - **브랜치**: main (배포) / develop (개발) / feature/* (기능)
 - **Node.js**: v20 LTS 이상
+
+---
+
+## 12. 구현 현황 및 개발 참고사항
+
+> 이 섹션은 실제 개발 과정에서 축적된 실전 지식이다. 새 세션에서 빠르게 맥락을 잡는 데 활용한다.
+
+### 12.1 현재 구현 상태 (2026-02-21 기준)
+
+| 영역 | 상태 | 비고 |
+|------|------|------|
+| Core 엔진 (파서/변환/접근성/검증) | ✅ 완성 | 60 tests 전체 통과 |
+| AI 인터랙션 (퀴즈/TTS/이미지/튜터) | ✅ 완성 | Mock + Real 모드 |
+| Web UI (7 페이지 + 15 API Routes) | ✅ 완성 | Next.js 16 App Router |
+| API 서버 (Express, 16 엔드포인트) | ✅ 완성 | 로컬 개발용 |
+| 문서 (8건) | ✅ 완성 | README, ARCHITECTURE, API, DEPLOY, FAQ, CONTRIBUTING, SIGIL, FINAL_REPORT |
+| GitHub Actions CI/CD | ✅ 완성 | 빌드 + 테스트 + 타입체크 |
+| Docker / Docker Compose | ✅ 완성 | dev/production 멀티스테이지 |
+| Vercel 배포 설정 | ✅ 완성 | 아직 실제 배포는 안 함 |
+| 프로덕션 DB (PostgreSQL) | ❌ 미구현 | 현재 인메모리 (Map) |
+| 작업 큐 (Redis/BullMQ) | ❌ 미구현 | 시간 기반 progress 시뮬레이션 |
+| 클라우드 스토리지 (GCS/S3) | ❌ 미구현 | 로컬 파일시스템 |
+| 외부 ePubCheck CLI 연동 | ❌ 미구현 | 내장 validator만 사용 |
+
+### 12.2 핵심 아키텍처 결정
+
+**듀얼 API 모드:**
+- **로컬**: Express 서버 (포트 3001) + Next.js (포트 3000), `NEXT_PUBLIC_API_URL=http://localhost:3001`
+- **Vercel**: Next.js API Route Handlers (15개), `NEXT_PUBLIC_API_URL` 빈 문자열 = 상대 URL
+- 모든 API 호출은 `packages/web/src/lib/api.ts`에서 중앙화
+
+**Mock/Real 자동 전환:**
+- `packages/core/src/interaction/ai-config.ts`에서 API 키 존재 여부 자동 감지
+- 키 없음 → Mock 모드 (데모용 결과 생성), 키 있음 → 실제 API 호출
+- 4개 API: `OPENAI_API_KEY`, `ELEVENLABS_API_KEY`, `STABILITY_API_KEY`, `ANTHROPIC_API_KEY`
+
+**데모 폴백 패턴:**
+- 웹 페이지에서 `try { API 호출 } catch { DEMO_DATA 사용 }` 패턴 일관 적용
+- API 서버 미연결 시에도 프론트엔드 단독 데모 가능
+
+### 12.3 주요 명령어
+
+```bash
+pnpm install              # 전체 의존성 설치
+pnpm dev                  # 웹 대시보드 (포트 3000)
+pnpm dev:api              # API 서버 (포트 3001)
+pnpm build                # 전체 빌드 (core → api → web)
+pnpm test                 # 전체 테스트
+pnpm clean                # 빌드 산출물 삭제
+docker compose up         # Docker 개발 환경 (3000 + 3001)
+
+# 개별 패키지
+pnpm --filter @gov-epub/core run build
+pnpm --filter @gov-epub/core run test
+pnpm --filter @gov-epub/web run build
+```
+
+### 12.4 핵심 파일 맵
+
+```
+packages/core/src/
+├── index.ts                    # processEpub() — 전체 파이프라인 진입점
+├── types.ts                    # 공유 타입 (EpubData, ConversionResult 등)
+├── parser/index.ts             # ZIP 해제 → OPF/NCX/XHTML 파싱
+├── converter/index.ts          # HTML5/CSS3/OPF3/Nav 변환 + 패키징
+├── accessibility/index.ts      # KWCAG 2.1 접근성 태그 자동 삽입
+├── validator/index.ts          # 구조/접근성/KPI 검증
+├── interaction/ai-config.ts    # Mock/Real 모드 자동 감지
+├── interaction/quiz/index.ts   # GPT-4 기반 퀴즈 생성
+├── interaction/tts/index.ts    # ElevenLabs TTS + SMIL 미디어 오버레이
+├── interaction/image/index.ts  # AI 이미지 추천/생성
+└── interaction/tutor/index.ts  # AI 튜터 채팅 위젯
+
+packages/web/src/
+├── app/page.tsx                # 메인 대시보드
+├── app/upload/page.tsx         # 업로드 페이지
+├── app/convert/page.tsx        # 변환 진행 페이지
+├── app/preview/page.tsx        # Before/After 미리보기
+├── app/report/page.tsx         # KPI 리포트
+├── app/settings/page.tsx       # 설정 (API 키)
+├── app/guide/page.tsx          # 사용 가이드
+├── app/api/                    # 15개 Next.js Route Handlers (Vercel용)
+├── lib/api.ts                  # API 호출 중앙화 모듈
+├── lib/auth.ts                 # 인증 유틸리티
+└── lib/server/services.ts      # 서버리스 변환 서비스 (Vercel용)
+```
+
+### 12.5 기술적 주의사항
+
+- **Buffer → Response**: Next.js Route Handler에서 `new Uint8Array(buffer)` 사용 필요
+- **`__dirname`**: `next.config.ts`에서 사용 가능 (SWC가 CJS로 컴파일)
+- **`dom-serializer`**: xmlMode에서 한국어가 `&#xHEX;` 엔티티로 인코딩됨
+- **Vercel 빌드 순서**: pnpm monorepo에서 core를 먼저 빌드해야 함 (`vercel.json`에 설정됨)
+- **Vercel Root Directory**: `packages/web` (`vercel.json`의 `installCommand`에서 `cd ../..` 후 `pnpm install`)
+- **`next.config.ts`**: `outputFileTracingRoot` → monorepo root, `serverExternalPackages: ['@gov-epub/core']`
+- **테스트 fixture**: `fixtures/` (3종 테스트 ePub) + `fixtures/samples/` (4종 공개 도메인)
+
+### 12.6 Git 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `b17e7ef` | feat: 초기 구현 (96 files, 27K lines) |
+| `6212560` | feat: Vercel 배포 지원 — Next.js API Route Handlers |
+| `eaff20b` | chore: CI/CD, Docker, LICENSE 추가 및 문서 업데이트 |
+
+### 12.7 남은 작업 (향후 세션)
+
+- Vercel 실제 배포 (`npx vercel` 또는 대시보드에서 프로젝트 생성)
+- 실제 AI API 연동 (API 키 설정 후 Mock → Real 전환)
+- 프로덕션 DB/스토리지 연동 (PostgreSQL, GCS/S3)
+- 비동기 작업 큐 (BullMQ + Redis)
+- 외부 ePubCheck CLI / Ace by DAISY 연동
+- 실제 ePub 1,000권 대량 변환 실증 테스트
+- FGI (출판사 인터뷰) 피드백 반영
