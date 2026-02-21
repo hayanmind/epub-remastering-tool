@@ -59,7 +59,7 @@ uploadRouter.get('/uploads', (_req: Request, res: Response) => {
 // DELETE /api/uploads/:id - Delete an uploaded file
 // ---------------------------------------------------------------------------
 
-uploadRouter.delete('/uploads/:id', async (req: Request, res: Response, next: NextFunction) => {
+uploadRouter.delete('/uploads/:id', async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const deleted = await storageService.deleteUpload(id);

@@ -10,7 +10,7 @@ export const downloadRouter = Router();
 // GET /api/download/:jobId - Download converted ePub file
 // ---------------------------------------------------------------------------
 
-downloadRouter.get('/download/:jobId', (req: Request, res: Response, next: NextFunction) => {
+downloadRouter.get('/download/:jobId', (req: Request<{ jobId: string }>, res: Response, next: NextFunction) => {
   try {
     const { jobId } = req.params;
     const job = conversionService.getJob(jobId);
@@ -41,7 +41,7 @@ downloadRouter.get('/download/:jobId', (req: Request, res: Response, next: NextF
 // GET /api/preview/:jobId - Get preview data
 // ---------------------------------------------------------------------------
 
-downloadRouter.get('/preview/:jobId', (req: Request, res: Response, next: NextFunction) => {
+downloadRouter.get('/preview/:jobId', (req: Request<{ jobId: string }>, res: Response, next: NextFunction) => {
   try {
     const { jobId } = req.params;
     const job = conversionService.getJob(jobId);
@@ -92,7 +92,7 @@ downloadRouter.get('/preview/:jobId', (req: Request, res: Response, next: NextFu
 // GET /api/report/:jobId - Get validation report (KPI metrics)
 // ---------------------------------------------------------------------------
 
-downloadRouter.get('/report/:jobId', (req: Request, res: Response, next: NextFunction) => {
+downloadRouter.get('/report/:jobId', (req: Request<{ jobId: string }>, res: Response, next: NextFunction) => {
   try {
     const { jobId } = req.params;
     const job = conversionService.getJob(jobId);

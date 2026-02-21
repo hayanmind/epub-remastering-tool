@@ -10,7 +10,7 @@ export const convertRouter = Router();
 // POST /api/convert/:uploadId - Start conversion
 // ---------------------------------------------------------------------------
 
-convertRouter.post('/convert/:uploadId', async (req: Request, res: Response, next: NextFunction) => {
+convertRouter.post('/convert/:uploadId', async (req: Request<{ uploadId: string }>, res: Response, next: NextFunction) => {
   try {
     const { uploadId } = req.params;
 
@@ -62,7 +62,7 @@ convertRouter.get('/jobs', (_req: Request, res: Response) => {
 // GET /api/jobs/:jobId - Get job status
 // ---------------------------------------------------------------------------
 
-convertRouter.get('/jobs/:jobId', (req: Request, res: Response, next: NextFunction) => {
+convertRouter.get('/jobs/:jobId', (req: Request<{ jobId: string }>, res: Response, next: NextFunction) => {
   try {
     const { jobId } = req.params;
     const job = conversionService.getJob(jobId);

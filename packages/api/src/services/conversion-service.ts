@@ -50,16 +50,14 @@ export interface ConversionJobOptions {
 // ---------------------------------------------------------------------------
 
 let coreAvailable = false;
-let corePipeline: {
-  parse: (buf: Buffer) => Promise<unknown>;
-  convert: (parsed: unknown, options: unknown) => Promise<{ epub: Buffer; report: unknown; metadata: unknown; stats: unknown }>;
-} | null = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let coreProcessEpub: ((inputBuffer: Buffer, options: any) => Promise<{ epub: Buffer; report: unknown; metadata: unknown; stats: { chapterCount: number; resourceCount: number; totalSize: number; conversionTimeMs: number } }>) | null = null;
 
 async function tryLoadCore(): Promise<void> {
   try {
     const core = await import('@gov-epub/core');
-    if (core && typeof core.parse === 'function' && typeof core.convert === 'function') {
-      corePipeline = core as typeof corePipeline;
+    if (core && typeof core.processEpub === 'function') {
+      coreProcessEpub = core.processEpub;
       coreAvailable = true;
       console.log('[conversion-service] @gov-epub/core loaded successfully');
     }
@@ -150,7 +148,7 @@ class ConversionService {
       const inputBuffer = await storageService.getUploadBuffer(job.uploadId);
       if (!inputBuffer) throw new Error('Upload file not found on disk');
 
-      if (coreAvailable && corePipeline) {
+      if (coreAvailable && coreProcessEpub) {
         await this.runRealPipeline(job, inputBuffer, updateProgress);
       } else {
         await this.runMockPipeline(job, inputBuffer, upload.originalName, updateProgress);
@@ -172,22 +170,16 @@ class ConversionService {
     inputBuffer: Buffer,
     updateProgress: (step: number, stage: JobStage) => void,
   ): Promise<void> {
-    if (!corePipeline) throw new Error('Core pipeline unavailable');
+    if (!coreProcessEpub) throw new Error('Core pipeline unavailable');
 
     updateProgress(1, 'parsing');
-    const parsed = await corePipeline.parse(inputBuffer);
-
     updateProgress(2, 'restructuring');
-    // restructuring is part of convert in core
-
     updateProgress(3, 'ai_content');
-    // AI content generation would be driven by core
-
     updateProgress(4, 'conversion');
-    const result = await corePipeline.convert(parsed, job.options);
+
+    const result = await coreProcessEpub(inputBuffer, job.options);
 
     updateProgress(5, 'validation');
-    // Validation report comes from the converter
 
     // Store result
     storageService.saveResult(job.jobId, result.epub, result.report, result.metadata, result.stats);
