@@ -14,6 +14,7 @@ import {
   Loader2,
   WifiOff,
   Server,
+  Lock,
 } from 'lucide-react';
 import { getHealth, saveSettings } from '@/lib/api';
 
@@ -23,14 +24,13 @@ interface ApiKeyField {
   placeholder: string;
   description: string;
   icon: typeof Key;
-  color: string;
 }
 
 const API_KEYS: ApiKeyField[] = [
-  { key: 'openai', label: 'OpenAI API 키', placeholder: 'sk-...로 시작하는 키', description: 'GPT-4 기반 변환, 퀴즈 생성, 요약에 사용', icon: Cpu, color: 'text-emerald-500' },
-  { key: 'anthropic', label: 'Anthropic API 키 (선택)', placeholder: 'sk-ant-...로 시작하는 키', description: 'Claude 모델 접근에 사용', icon: Shield, color: 'text-indigo-500' },
-  { key: 'elevenlabs', label: 'ElevenLabs API 키 (선택)', placeholder: 'API 키 입력', description: 'TTS 음성 변환에 사용', icon: Volume2, color: 'text-blue-500' },
-  { key: 'stability', label: 'Stability AI 키 (선택)', placeholder: 'sk-...로 시작하는 키', description: '이미지 생성/향상에 사용', icon: Image, color: 'text-purple-500' },
+  { key: 'openai', label: 'OpenAI API 키', placeholder: 'sk-...로 시작하는 키', description: 'GPT-4 기반 변환, 퀴즈 생성, 요약에 사용', icon: Cpu },
+  { key: 'anthropic', label: 'Anthropic API 키 (선택)', placeholder: 'sk-ant-...로 시작하는 키', description: 'Claude 모델 접근에 사용', icon: Shield },
+  { key: 'elevenlabs', label: 'ElevenLabs API 키 (선택)', placeholder: 'API 키 입력', description: 'TTS 음성 변환에 사용', icon: Volume2 },
+  { key: 'stability', label: 'Stability AI 키 (선택)', placeholder: 'sk-...로 시작하는 키', description: '이미지 생성/향상에 사용', icon: Image },
 ];
 
 export default function SettingsPage() {
@@ -69,7 +69,6 @@ export default function SettingsPage() {
   const handleTest = async (keyName: string) => {
     setTesting(keyName);
     setTestResults((r) => ({ ...r, [keyName]: null }));
-    // Simulate test
     await new Promise((r) => setTimeout(r, 1500));
     setTestResults((r) => ({ ...r, [keyName]: keys[keyName] ? 'success' : 'fail' }));
     setTesting(null);
@@ -78,42 +77,53 @@ export default function SettingsPage() {
   const hasAnyKey = Object.values(keys).some((v) => v.trim().length > 0);
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fadeIn">
+    <div className="max-w-3xl mx-auto space-y-5 animate-fadeIn">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">설정</h1>
-        <p className="text-sm text-gray-600 mt-1">API 키 및 변환 옵션을 관리합니다</p>
+        <h1 className="text-lg font-bold text-gray-900">설정</h1>
+        <p className="text-xs text-gray-500 mt-0.5">API 키 및 변환 옵션을 관리합니다</p>
+      </div>
+
+      {/* Zero-Retention notice */}
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-start gap-3">
+        <Lock className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
+        <div>
+          <p className="text-sm font-medium text-gray-700">API Zero-Retention 정책</p>
+          <p className="text-xs text-gray-500 mt-0.5">
+            모든 외부 AI API 호출은 데이터 비저장(Opt-out) 정책을 적용합니다. 업로드된 콘텐츠는 AI 학습에 사용되지 않으며, 변환 완료 후 서버에서 자동 삭제됩니다.
+          </p>
+        </div>
       </div>
 
       {/* Mode indicator */}
-      <div className={`rounded-2xl border p-4 flex items-center gap-3 ${hasAnyKey ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
-        <div className={`p-2 rounded-xl ${hasAnyKey ? 'bg-emerald-100' : 'bg-amber-100'}`}>
-          {hasAnyKey ? <Cpu className="w-5 h-5 text-emerald-600" /> : <Shield className="w-5 h-5 text-amber-600" />}
+      <div className={`rounded-xl border p-3.5 flex items-center gap-3 ${hasAnyKey ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-200'}`}>
+        <div className={`p-2 rounded-lg ${hasAnyKey ? 'bg-emerald-100' : 'bg-gray-100'}`}>
+          {hasAnyKey ? <Cpu className="w-4 h-4 text-emerald-600" /> : <Shield className="w-4 h-4 text-gray-500" />}
         </div>
         <div>
-          <p className={`text-sm font-semibold ${hasAnyKey ? 'text-emerald-800' : 'text-amber-800'}`}>
+          <p className={`text-sm font-semibold ${hasAnyKey ? 'text-emerald-800' : 'text-gray-700'}`}>
             {hasAnyKey ? 'AI 모드 활성화' : 'Mock 모드'}
           </p>
-          <p className={`text-xs ${hasAnyKey ? 'text-emerald-600' : 'text-amber-600'}`}>
+          <p className={`text-[11px] ${hasAnyKey ? 'text-emerald-600' : 'text-gray-500'}`}>
             {hasAnyKey ? 'AI API를 사용하여 실제 변환을 수행합니다' : 'API 키가 설정되지 않아 데모 결과를 생성합니다'}
           </p>
         </div>
       </div>
 
       {/* API Keys */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-5">
         <div className="flex items-center gap-2">
-          <Key className="w-5 h-5 text-indigo-500" />
-          <h2 className="font-semibold text-gray-900">API 키 설정</h2>
+          <Key className="w-4 h-4 text-indigo-600" />
+          <h2 className="font-semibold text-sm text-gray-900">API 키 설정</h2>
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-4">
           {API_KEYS.map((field) => {
             const Icon = field.icon;
             return (
-              <div key={field.key} className="p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-all">
+              <div key={field.key} className="p-3.5 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
                 <div className="flex items-center gap-2 mb-2">
-                  <Icon className={`w-4 h-4 ${field.color}`} />
-                  <label className="text-sm font-semibold text-gray-800">{field.label}</label>
+                  <Icon className="w-4 h-4 text-gray-400" />
+                  <label className="text-sm font-medium text-gray-800">{field.label}</label>
                 </div>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
@@ -122,19 +132,19 @@ export default function SettingsPage() {
                       value={keys[field.key] || ''}
                       onChange={(e) => setKeys((k) => ({ ...k, [field.key]: e.target.value }))}
                       placeholder={field.placeholder}
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
+                      className="w-full px-3.5 py-2 border border-gray-200 rounded-lg text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
                     />
                     <button
                       onClick={() => setShowKeys((s) => ({ ...s, [field.key]: !s[field.key] }))}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                      {showKeys[field.key] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showKeys[field.key] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                   <button
                     onClick={() => handleTest(field.key)}
                     disabled={!keys[field.key] || testing === field.key}
-                    className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all whitespace-nowrap"
+                    className="px-3.5 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
                   >
                     {testing === field.key ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -147,17 +157,17 @@ export default function SettingsPage() {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1.5 ml-1">{field.description}</p>
+                <p className="text-[11px] text-gray-400 mt-1.5">{field.description}</p>
               </div>
             );
           })}
         </div>
 
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex items-center gap-3 pt-1">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 flex items-center gap-2"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center gap-2"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             저장
@@ -171,12 +181,12 @@ export default function SettingsPage() {
       </div>
 
       {/* System Info */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <Server className="w-5 h-5 text-indigo-500" />
-          <h2 className="font-semibold text-gray-900">시스템 정보</h2>
+          <Server className="w-4 h-4 text-indigo-600" />
+          <h2 className="font-semibold text-sm text-gray-900">시스템 정보</h2>
         </div>
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-2 gap-2 text-sm">
           {[
             { label: '버전', value: 'v1.0.0', mono: true },
             { label: '모드', value: hasAnyKey ? 'AI (Live)' : 'Mock (Demo)', mono: false },
@@ -185,8 +195,8 @@ export default function SettingsPage() {
             { label: 'API 서버', value: apiStatus === 'connected' ? '연결됨' : '미연결', mono: false },
             { label: 'Next.js', value: 'v16', mono: true },
           ].map(({ label, value, mono }) => (
-            <div key={label} className="p-3 bg-gray-50/80 rounded-xl">
-              <p className="text-xs text-gray-600 mb-0.5">{label}</p>
+            <div key={label} className="p-2.5 bg-gray-50 rounded-lg">
+              <p className="text-[11px] text-gray-500 mb-0.5">{label}</p>
               <p className={`font-medium text-gray-900 ${mono ? 'font-mono text-xs' : 'text-sm'}`}>{value}</p>
             </div>
           ))}

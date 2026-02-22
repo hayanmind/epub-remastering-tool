@@ -550,13 +550,13 @@ gov-epub-2026/
 
 > 이 섹션은 실제 개발 과정에서 축적된 실전 지식이다. 새 세션에서 빠르게 맥락을 잡는 데 활용한다.
 
-### 12.1 현재 구현 상태 (2026-02-21 기준)
+### 12.1 현재 구현 상태 (2026-02-22 기준)
 
 | 영역 | 상태 | 비고 |
 |------|------|------|
 | Core 엔진 (파서/변환/접근성/검증) | ✅ 완성 | 60 tests 전체 통과 |
 | AI 인터랙션 (퀴즈/TTS/이미지/튜터) | ✅ 완성 | Mock + Real 모드 |
-| Web UI (7 페이지 + 15 API Routes) | ✅ 완성 | Next.js 16 App Router |
+| Web UI (7 페이지 + 15 API Routes) | ✅ 완성 | Next.js 16 App Router, 프리미엄 UI/UX (v2) |
 | API 서버 (Express, 16 엔드포인트) | ✅ 완성 | 로컬 개발용 |
 | 문서 (8건) | ✅ 완성 | README, ARCHITECTURE, API, DEPLOY, FAQ, CONTRIBUTING, SIGIL, FINAL_REPORT |
 | GitHub Actions CI/CD | ✅ 완성 | 빌드 + 테스트 + 타입체크 |
@@ -617,16 +617,19 @@ packages/core/src/
 └── interaction/tutor/index.ts  # AI 튜터 채팅 위젯
 
 packages/web/src/
-├── app/page.tsx                # 메인 대시보드
+├── app/page.tsx                # 메인 대시보드 (데모 플로우 통합)
 ├── app/upload/page.tsx         # 업로드 페이지
-├── app/convert/page.tsx        # 변환 진행 페이지
-├── app/preview/page.tsx        # Before/After 미리보기
-├── app/report/page.tsx         # KPI 리포트
-├── app/settings/page.tsx       # 설정 (API 키)
+├── app/convert/page.tsx        # 변환 진행 페이지 (가변 타이밍 데모)
+├── app/preview/page.tsx        # Before/After 미리보기 (운수 좋은 날)
+├── app/report/page.tsx         # KPI 리포트 (데모 자동 표시)
+├── app/settings/page.tsx       # 설정 (API 키, Zero-Retention 안내)
 ├── app/guide/page.tsx          # 사용 가이드
 ├── app/api/                    # 15개 Next.js Route Handlers (Vercel용)
+├── components/ui/waveform.tsx  # TTS 파형 시각화 컴포넌트
 ├── lib/api.ts                  # API 호출 중앙화 모듈
 ├── lib/auth.ts                 # 인증 유틸리티
+├── lib/demo-data.ts            # 한국 문학 기반 데모 데이터 (운수 좋은 날)
+├── lib/demo-flow.ts            # 원클릭 데모 오케스트레이터
 └── lib/server/services.ts      # 서버리스 변환 서비스 (Vercel용)
 ```
 
@@ -640,7 +643,22 @@ packages/web/src/
 - **`next.config.ts`**: `outputFileTracingRoot` → monorepo root, `serverExternalPackages: ['@gov-epub/core']`
 - **테스트 fixture**: `fixtures/` (3종 테스트 ePub) + `fixtures/samples/` (4종 공개 도메인)
 
-### 12.6 Git 이력
+### 12.6 UI/UX 디자인 원칙 (v2)
+
+| 항목 | 변경 전 | 변경 후 |
+|------|---------|---------|
+| 색상 | Rainbow gradient stat 카드 | 무채색 + 단일 accent (#4F46E5) |
+| 버튼 | `bg-gradient-to-r from-X to-Y` | `bg-indigo-600` solid |
+| 라운딩 | `rounded-2xl` 전부 | `rounded-lg` 기본, 카드 `rounded-xl` |
+| 아이콘 | `Sparkles` 남발 | 맥락별 개별 아이콘 |
+| 강조 | shadow 강조 | border 강조 (1px solid) |
+| 빈 화면 | 데이터 없으면 빈 화면 | 데모 데이터 자동 표시 |
+| 데모 콘텐츠 | 천문학 더미 텍스트 | 한국 문학 (운수 좋은 날, 현진건) |
+| 사이드바 | 다크 gradient | 라이트 (bg-white, border-r) |
+| TTS | 단순 프로그레스 바 | CSS 파형 시각화 (waveform.tsx) |
+| 데모 플로우 | 수동 (파일 업로드 필요) | 원클릭 자동 (대시보드 → 변환 → 미리보기) |
+
+### 12.7 Git 이력
 
 | 커밋 | 내용 |
 |------|------|
@@ -648,7 +666,7 @@ packages/web/src/
 | `6212560` | feat: Vercel 배포 지원 — Next.js API Route Handlers |
 | `eaff20b` | chore: CI/CD, Docker, LICENSE 추가 및 문서 업데이트 |
 
-### 12.7 남은 작업 (향후 세션)
+### 12.8 남은 작업 (향후 세션)
 
 - Vercel 실제 배포 (`npx vercel` 또는 대시보드에서 프로젝트 생성)
 - 실제 AI API 연동 (API 키 설정 후 Mock → Real 전환)

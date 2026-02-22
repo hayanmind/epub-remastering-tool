@@ -6,10 +6,8 @@ import {
   Upload,
   FileText,
   X,
-  CheckCircle,
   AlertCircle,
   Loader2,
-  Sparkles,
   BookOpen,
   Globe,
   HardDrive,
@@ -70,8 +68,7 @@ export default function UploadPage() {
       const uploadResult = await useSample(sampleId);
       const convResult = await startConversion(uploadResult.id, options);
       router.push(`/convert?job=${convResult.jobId}`);
-    } catch (err) {
-      // Demo fallback
+    } catch {
       const demoId = 'demo-' + Date.now();
       router.push(`/convert?job=${demoId}`);
     } finally {
@@ -108,7 +105,6 @@ export default function UploadPage() {
       const convResult = await startConversion(uploadResult.id, options);
       router.push(`/convert?job=${convResult.jobId}`);
     } catch {
-      // Demo fallback
       const demoId = 'demo-' + Date.now();
       router.push(`/convert?job=${demoId}`);
     } finally {
@@ -132,65 +128,63 @@ export default function UploadPage() {
 
   const optionItems = [
     { key: 'enableQuiz', label: '퀴즈 자동 생성', desc: 'LLM 기반 챕터별 퀴즈', icon: HelpCircle, color: 'text-indigo-500' },
-    { key: 'enableTts', label: 'TTS 음성 변환', desc: '미디어 오버레이 싱크', icon: Volume2, color: 'text-blue-500' },
-    { key: 'enableSummary', label: '챕터 요약', desc: 'AI 기반 요약문 생성', icon: MessageSquare, color: 'text-emerald-500' },
-    { key: 'enableImageGen', label: '이미지 생성', desc: 'AI 이미지 추천/생성', icon: Image, color: 'text-purple-500' },
+    { key: 'enableTts', label: 'TTS 음성 변환', desc: '미디어 오버레이 싱크', icon: Volume2, color: 'text-indigo-500' },
+    { key: 'enableSummary', label: '챕터 요약', desc: 'AI 기반 요약문 생성', icon: MessageSquare, color: 'text-indigo-500' },
+    { key: 'enableImageGen', label: '이미지 생성', desc: 'AI 이미지 추천/생성', icon: Image, color: 'text-indigo-500' },
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 animate-fadeIn">
+    <div className="max-w-5xl mx-auto space-y-8 animate-fadeIn">
       {/* Section 1: Sample Picker */}
       <section>
-        <div className="flex items-center gap-3 mb-1">
-          <div className="p-2 bg-indigo-50 rounded-xl">
-            <Sparkles className="w-5 h-5 text-indigo-500" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">샘플 파일로 시작하기</h2>
-            <p className="text-sm text-gray-600">미리 준비된 ePub 파일로 변환 기능을 바로 체험해보세요</p>
-          </div>
+        <div className="mb-4">
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-indigo-600" />
+            샘플 파일로 시작하기
+          </h2>
+          <p className="text-sm text-gray-500 mt-0.5">미리 준비된 ePub 파일로 변환 기능을 바로 체험해보세요</p>
         </div>
 
         {loadingSamples ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse-slow">
-                <div className="h-6 bg-gray-100 rounded w-3/4 mb-3" />
+              <div key={i} className="bg-white rounded-xl border border-gray-200 p-5 animate-pulse-slow">
+                <div className="h-5 bg-gray-100 rounded w-3/4 mb-3" />
                 <div className="h-4 bg-gray-100 rounded w-1/2 mb-2" />
                 <div className="h-4 bg-gray-100 rounded w-full" />
               </div>
             ))}
           </div>
         ) : samples.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center mt-5">
-            <BookOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-600">샘플 파일이 아직 준비되지 않았습니다</p>
+          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+            <BookOpen className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500 text-sm">샘플 파일이 아직 준비되지 않았습니다</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {samples.map((sample) => (
               <div
                 key={sample.id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-indigo-200 transition-all duration-200 flex flex-col"
+                className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-colors flex flex-col"
               >
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="p-2.5 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl shrink-0">
-                    <FileText className="w-5 h-5 text-indigo-500" />
+                  <div className="p-2 bg-gray-50 rounded-lg shrink-0">
+                    <FileText className="w-4 h-4 text-gray-500" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="font-semibold text-gray-900 text-sm leading-snug truncate">{sample.title}</h3>
-                    <p className="text-xs text-gray-600 mt-0.5">{sample.author}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{sample.author}</p>
                   </div>
                 </div>
-                <p className="text-xs text-gray-600 leading-relaxed mb-3 flex-1 line-clamp-2">{sample.description}</p>
-                <div className="flex items-center gap-2 mb-4 flex-wrap">
-                  <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${langColor(sample.language)}`}>
+                <p className="text-xs text-gray-500 leading-relaxed mb-3 flex-1 line-clamp-2">{sample.description}</p>
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md border ${langColor(sample.language)}`}>
                     {langLabel(sample.language)}
                   </span>
-                  <span className="text-[11px] text-gray-500 flex items-center gap-1">
+                  <span className="text-[11px] text-gray-400 flex items-center gap-1">
                     <HardDrive className="w-3 h-3" /> {formatFileSize(sample.fileSize)}
                   </span>
-                  <span className="text-[11px] text-gray-500 flex items-center gap-1">
+                  <span className="text-[11px] text-gray-400 flex items-center gap-1">
                     <Globe className="w-3 h-3" /> {sample.source}
                   </span>
                 </div>
@@ -198,7 +192,7 @@ export default function UploadPage() {
                   <button
                     onClick={() => handleUseSample(sample.id)}
                     disabled={usingSampleId !== null}
-                    className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {usingSampleId === sample.id ? (
                       <><Loader2 className="w-3.5 h-3.5 animate-spin" /> 처리 중...</>
@@ -208,11 +202,10 @@ export default function UploadPage() {
                   </button>
                   <a
                     href={getSampleDownloadUrl(sample.id)}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 transition-all"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
                     title="다운로드"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">다운로드</span>
                   </a>
                 </div>
               </div>
@@ -227,7 +220,7 @@ export default function UploadPage() {
           <div className="w-full border-t border-gray-200" />
         </div>
         <div className="relative flex justify-center">
-          <span className="px-4 bg-gray-50 text-sm text-gray-500 font-medium">또는 직접 파일을 업로드하세요</span>
+          <span className="px-4 text-sm text-gray-500 font-medium" style={{ background: 'var(--bg-base)' }}>또는 직접 파일을 업로드하세요</span>
         </div>
       </div>
 
@@ -238,23 +231,23 @@ export default function UploadPage() {
           onDrop={handleDrop}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
-          className={`relative border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-200 cursor-pointer ${
+          className={`relative border-2 border-dashed rounded-xl p-10 text-center transition-all cursor-pointer ${
             dragOver
-              ? 'border-indigo-400 bg-indigo-50/50 shadow-inner'
+              ? 'border-indigo-400 bg-indigo-50/50'
               : file
               ? 'border-emerald-300 bg-emerald-50/30'
-              : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/20'
+              : 'border-gray-200 hover:border-gray-300'
           }`}
           onClick={() => !file && document.getElementById('file-input')?.click()}
         >
           {file ? (
             <div className="flex flex-col items-center gap-3">
-              <div className="p-3 bg-emerald-100 rounded-2xl">
-                <FileText className="w-8 h-8 text-emerald-600" />
+              <div className="p-3 bg-emerald-50 rounded-xl">
+                <FileText className="w-7 h-7 text-emerald-600" />
               </div>
               <div>
                 <p className="font-semibold text-gray-900">{file.name}</p>
-                <p className="text-sm text-gray-600 mt-0.5">{formatFileSize(file.size)}</p>
+                <p className="text-sm text-gray-500 mt-0.5">{formatFileSize(file.size)}</p>
               </div>
               <button
                 onClick={(e) => { e.stopPropagation(); setFile(null); }}
@@ -265,12 +258,12 @@ export default function UploadPage() {
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3">
-              <div className="p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl">
-                <Upload className="w-8 h-8 text-indigo-500" />
+              <div className="p-3 bg-gray-50 rounded-xl">
+                <Upload className="w-7 h-7 text-gray-400" />
               </div>
               <div>
-                <p className="font-semibold text-gray-700">ePub 파일을 드래그하거나 클릭하여 선택</p>
-                <p className="text-sm text-gray-500 mt-1">ePub 2.0 이하 파일 지원 (최대 50MB)</p>
+                <p className="font-medium text-gray-700">ePub 파일을 드래그하거나 클릭하여 선택</p>
+                <p className="text-sm text-gray-400 mt-1">ePub 2.0 이하 파일 지원 (최대 50MB)</p>
               </div>
             </div>
           )}
@@ -278,24 +271,22 @@ export default function UploadPage() {
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-xl text-sm border border-red-100">
+          <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg text-sm border border-red-100">
             <AlertCircle className="w-4 h-4 shrink-0" /> {error}
           </div>
         )}
 
         {/* Conversion options */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-indigo-500" /> 변환 옵션
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {optionItems.map(({ key, label, desc, icon: Icon, color }) => (
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="font-semibold text-sm text-gray-900 mb-4">변환 옵션</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {optionItems.map(({ key, label, desc, icon: Icon }) => (
               <label
                 key={key}
-                className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                   options[key as keyof typeof options]
                     ? 'border-indigo-200 bg-indigo-50/40'
-                    : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50/50'
+                    : 'border-gray-100 hover:border-gray-200'
                 }`}
               >
                 <div className="relative">
@@ -305,14 +296,14 @@ export default function UploadPage() {
                     onChange={(e) => setOptions((o) => ({ ...o, [key]: e.target.checked }))}
                     className="sr-only"
                   />
-                  <div className={`w-10 h-6 rounded-full transition-colors ${options[key as keyof typeof options] ? 'bg-indigo-500' : 'bg-gray-200'}`}>
-                    <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform mt-1 ${options[key as keyof typeof options] ? 'translate-x-5' : 'translate-x-1'}`} />
+                  <div className={`w-9 h-5 rounded-full transition-colors ${options[key as keyof typeof options] ? 'bg-indigo-600' : 'bg-gray-200'}`}>
+                    <div className={`w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-transform mt-[3px] ${options[key as keyof typeof options] ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
                   </div>
                 </div>
-                <Icon className={`w-5 h-5 ${color} shrink-0`} />
+                <Icon className="w-4 h-4 text-gray-400 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-gray-900">{label}</p>
-                  <p className="text-xs text-gray-600">{desc}</p>
+                  <p className="text-[11px] text-gray-500">{desc}</p>
                 </div>
               </label>
             ))}
@@ -323,7 +314,7 @@ export default function UploadPage() {
         <button
           onClick={handleUploadAndConvert}
           disabled={!file || uploading}
-          className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-medium shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-200"
+          className="w-full py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
         >
           {uploading ? (
             <><Loader2 className="w-4 h-4 animate-spin" /> 업로드 및 변환 시작 중...</>

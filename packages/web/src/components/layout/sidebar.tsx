@@ -27,38 +27,35 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col min-h-screen">
+    <aside className="w-60 bg-white border-r border-gray-200 flex flex-col min-h-screen">
       {/* Logo */}
-      <div className="p-6 pb-5">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="absolute inset-0 bg-indigo-500/30 blur-lg rounded-full" />
-            <div className="relative w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-              <BookOpen className="w-5 h-5 text-white" />
-            </div>
+      <div className="p-5 pb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center">
+            <BookOpen className="w-[18px] h-[18px] text-white" />
           </div>
           <div>
-            <h1 className="font-bold text-lg leading-tight tracking-tight">ePub 3.0</h1>
-            <p className="text-xs text-gray-400 font-medium">리마스터링 도구</p>
+            <h1 className="font-bold text-[15px] leading-tight tracking-tight text-gray-900">ePub 3.0</h1>
+            <p className="text-[11px] text-gray-500 font-medium">리마스터링 도구</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-2 space-y-1">
+      <nav className="flex-1 px-3 py-1 space-y-0.5">
         {navItems.map(({ href, icon: Icon, label }) => {
           const active = pathname === href || (href !== '/' && pathname.startsWith(href));
           return (
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${
                 active
-                  ? 'bg-indigo-500/15 text-indigo-300 border-l-[3px] border-indigo-500 pl-[13px]'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-gray-100 text-gray-900'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              <Icon className={`w-[18px] h-[18px] ${active ? 'text-indigo-400' : ''}`} />
+              <Icon className={`w-[16px] h-[16px] ${active ? 'text-indigo-600' : 'text-gray-400'}`} />
               {label}
             </Link>
           );
@@ -66,10 +63,10 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-5 border-t border-white/10">
-        <p className="text-gray-300 text-xs font-medium">(주)하얀마인드</p>
-        <p className="text-gray-400 text-[11px] mt-1">한국출판문화산업진흥원 지원</p>
-        <p className="text-gray-500 text-[10px] mt-2 font-mono">v1.0.0</p>
+      <div className="p-4 border-t border-gray-100">
+        <p className="text-gray-600 text-xs font-medium">(주)하얀마인드</p>
+        <p className="text-gray-400 text-[11px] mt-0.5">한국출판문화산업진흥원 지원</p>
+        <p className="text-gray-400 text-[10px] mt-1.5 font-mono">v1.0.0</p>
       </div>
     </aside>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Loader2, Sparkles, Mail, Lock, User } from 'lucide-react';
+import { X, Loader2, Mail, Lock, User, BookOpen } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 
 interface LoginModalProps {
@@ -64,23 +64,27 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden animate-slideUp">
-        {/* Header gradient */}
-        <div className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 px-6 py-5 text-white relative">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4" />
-          <div className="relative flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold tracking-tight">로그인</h2>
-              <p className="text-indigo-200 text-sm mt-0.5">ePub 3.0 리마스터링 도구</p>
+      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden animate-slideUp">
+        {/* Header */}
+        <div className="px-6 py-5 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <BookOpen className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-gray-900 tracking-tight">로그인</h2>
+                <p className="text-gray-500 text-xs mt-0.5">ePub 3.0 리마스터링 도구</p>
+              </div>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -91,12 +95,12 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
             <button
               onClick={handleDemoLogin}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 py-2.5 bg-indigo-600 text-white rounded-lg font-medium text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <Sparkles className="w-4 h-4" />
+                <BookOpen className="w-4 h-4" />
               )}
               데모로 시작하기
             </button>
@@ -114,10 +118,10 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
           )}
 
           {/* Tab switcher */}
-          <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => { setTab('login'); setError(null); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${
                 tab === 'login'
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-700'
@@ -127,7 +131,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
             </button>
             <button
               onClick={() => { setTab('register'); setError(null); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${
                 tab === 'register'
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-700'
@@ -139,7 +143,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
 
           {/* Error message */}
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+            <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
               {error}
             </div>
           )}
@@ -156,7 +160,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
                     required
                   />
                 </div>
@@ -170,7 +174,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="비밀번호 입력"
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
                     required
                   />
                 </div>
@@ -178,7 +182,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                 로그인
@@ -198,7 +202,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="이름 입력"
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
                     required
                   />
                 </div>
@@ -212,7 +216,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
                     required
                   />
                 </div>
@@ -226,7 +230,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="비밀번호 입력"
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
                     required
                   />
                 </div>
@@ -234,7 +238,7 @@ export default function LoginModal({ open, onClose }: LoginModalProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                 회원가입
