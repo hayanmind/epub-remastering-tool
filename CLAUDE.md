@@ -665,6 +665,8 @@ packages/web/src/
 | `b17e7ef` | feat: 초기 구현 (96 files, 27K lines) |
 | `6212560` | feat: Vercel 배포 지원 — Next.js API Route Handlers |
 | `eaff20b` | chore: CI/CD, Docker, LICENSE 추가 및 문서 업데이트 |
+| `004514b` | feat: 프리미엄 UI/UX 오버홀 및 원클릭 데모 플로우 |
+| `dd8415e` | fix: API 패키지 TypeScript 타입 에러 수정 |
 
 ### 12.8 남은 작업 (향후 세션)
 
@@ -675,3 +677,28 @@ packages/web/src/
 - 외부 ePubCheck CLI / Ace by DAISY 연동
 - 실제 ePub 1,000권 대량 변환 실증 테스트
 - FGI (출판사 인터뷰) 피드백 반영
+
+---
+
+## 13. 대화 스타일 및 작업 규칙
+
+### 13.1 언어 규칙
+
+- **대화 언어**: 한국어
+- **코드/커밋 메시지/변수명**: 영어
+- **커밋 메시지 본문**: 한글 설명 가능 (제목은 Conventional Commits 영어)
+
+### 13.2 작업 방식
+
+- 지시하면 바로 실행. 확인 질문 최소화.
+- 간결하고 직접적인 대화 톤. 불필요한 존댓말 지양.
+- 에러 발생 시 직접 고치고, CI 통과까지 확인.
+- 코드에 과도한 주석 지양. 기존 패턴 따르기.
+- 새 파일 생성보다 기존 파일 수정 우선.
+
+### 13.3 코드 스타일
+
+- TypeScript strict, ESM
+- Conventional Commits: `feat:`, `fix:`, `docs:`, `test:`, `chore:`
+- 기존 코드베이스 패턴/구조를 최대한 따른다
+- 불필요한 타입 어노테이션, docstring 추가 지양
